@@ -60,12 +60,11 @@ app.delete("/tarefas/:id", (req, res) => {
 });
 
 // Health check
-app.get("/", (req, res) => {
-  res.json({
+res.json({
     status: "API de Tarefas rodando com CI/CD no Render",
-    versao: "1.0.0"
+    versao: "1.0.1",
+    timestamp: new Date().toISOString()
   });
-});
 
 // Iniciar servidor
 app.listen(PORT, () => {
