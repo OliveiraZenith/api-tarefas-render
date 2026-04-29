@@ -5,6 +5,17 @@ const PORT = process.env.PORT || 5000;
 /** Cor de identificação nas respostas JSON da API (hex). */
 const COR_RESPOSTA_API = "#0d9488";
 
+/** Data de criação da API (ISO 8601). */
+const DATA_CRIACAO_API = "2025-11-01T00:00:00.000Z";
+
+function jsonComInformacoesApi(corpo) {
+  return {
+    cor: COR_RESPOSTA_API,
+    dataCriacaoApi: DATA_CRIACAO_API,
+    ...corpo
+  };
+}
+
 // Middleware
 app.use(express.json());
 
@@ -16,12 +27,13 @@ let tarefas = [
 
 // Rota GET: listar tarefas
 app.get("/tarefas", (req, res) => {
-  res.json({
-    cor: COR_RESPOSTA_API,
-    mensagem: "Tarefas carregadas com sucesso",
-    total: tarefas.length,
-    tarefas: tarefas
-  });
+  res.json(
+    jsonComInformacoesApi({
+      mensagem: "Tarefas carregadas com sucesso",
+      total: tarefas.length,
+      tarefas: tarefas
+    })
+  );
 });
 
 // Rota POST: criar tarefa
@@ -39,11 +51,12 @@ app.post("/tarefas", (req, res) => {
   };
 
   tarefas.push(novaTarefa);
-  res.status(201).json({
-    cor: COR_RESPOSTA_API,
-    mensagem: "Tarefa criada",
-    tarefa: novaTarefa
-  });
+  res.status(201).json(
+    jsonComInformacoesApi({
+      mensagem: "Tarefa criada",
+      tarefa: novaTarefa
+    })
+  );
 });
 
 // Rota PATCH: atualizar tarefa
@@ -57,31 +70,30 @@ app.patch("/tarefas/:id", (req, res) => {
   }
 
   tarefa.concluida = concluida;
-  res.json({
-    cor: COR_RESPOSTA_API,
-    mensagem: "Tarefa atualizada",
-    tarefa: tarefa
-  });
+  res.json(
+    jsonComInformacoesApi({
+      mensagem: "Tarefa atualizada",
+      tarefa: tarefa
+    })
+  );
 });
 
 // Rota DELETE: deletar tarefa
 app.delete("/tarefas/:id", (req, res) => {
   const { id } = req.params;
   tarefas = tarefas.filter(t => t.id != id);
-  res.json({
-    cor: COR_RESPOSTA_API,
-    mensagem: "Tarefa deletada"
-  });
+  res.json(jsonComInformacoesApi({ mensagem: "Tarefa deletada" }));
 });
 
 // Health check
 app.get("/", (req, res) => {
-  res.json({
-    cor: COR_RESPOSTA_API,
-    status: "API de Tarefas rodando com CI/CD no Render",
-    versao: "1.0.1",
-    timestamp: new Date().toISOString()
-  });
+  res.json(
+    jsonComInformacoesApi({
+      status: "API de Tarefas rodando com CI/CD no Render",
+      versao: "1.0.1",
+      timestamp: new Date().toISOString()
+    })
+  );
 });
 
 // Iniciar servidor
